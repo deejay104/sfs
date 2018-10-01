@@ -1,0 +1,5 @@
+{
+    "require": {
+        "portphp/excel": "^1.1"
+    }
+}

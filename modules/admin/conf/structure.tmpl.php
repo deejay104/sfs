@@ -1,0 +1,56 @@
+<?
+$tabCustom=Array
+(
+	"projects" => Array (
+		"id" => Array("Type" => "int(10) unsigned", "Index" => "PRIMARY", ),
+		"name" => Array("Type" => "varchar(100)" ),
+		"client" => Array("Type" => "varchar(50)" ),
+		"country" => Array("Type" => "varchar(50)" ),
+		"version" => Array("Type" => "varchar(8)" ),
+		"business" => Array("Type" => "varchar(50)" ),
+		"type" => Array("Type" => "varchar(50)" ),
+		"budget" => Array("Type" => "decimal(10,2)", "Default" => "0.00" ),
+		"status" => Array("Type" => "enum('1new','2inprg','3close')", "Default" => "1new", "Index"=>1),
+		"day" => Array("Type" => "tinyint(3) unsigned"),
+		"actif" => Array("Type" => "enum('oui','non')", "Default" => "oui", "Index"=>1),
+		"uid_creat" => Array("Type" => "int(10) unsigned", "Index" => "1", ),
+		"dte_creat" => Array("Type" => "datetime", "Default" => "0000-00-00 00:00:00"),
+		"uid_maj" => Array("Type" => "int(11)", ),
+		"dte_maj" => Array("Type" => "datetime", "Default" => "0000-00-00 00:00:00"),
+	),
+	"projects_mgr" => Array (
+		"id" => Array("Type" => "int(10) unsigned", "Index" => "PRIMARY", ),
+		"uid" => Array("Type" => "int(10) unsigned", "Index"=>1 ),
+		"prjid" => Array("Type" => "int(10) unsigned", "Index"=>1 ),
+		"uid_creat" => Array("Type" => "int(10) unsigned", "Index" => "1", ),
+		"dte_creat" => Array("Type" => "datetime", "Default" => "0000-00-00 00:00:00"),
+		"uid_maj" => Array("Type" => "int(11)", ),
+		"dte_maj" => Array("Type" => "datetime", "Default" => "0000-00-00 00:00:00"),
+	),
+	"followup" => Array (
+		"id" => Array("Type" => "int(10) unsigned", "Index" => "PRIMARY", ),
+		"project" => Array("Type" => "int(10) unsigned", "Index" => "1", ),
+		"week" => Array("Type" => "varchar(8)", "Index" => "1", ),
+		"dte" => Array("Type" => "date", "Index" => "1", ),
+		"phase" => Array("Type" => "int(10) unsigned", "Index" => "1", ),
+		"sprint" => Array("Type" => "int(10) unsigned"),
+		"wave" => Array("Type" => "int(10) unsigned"),
+		"tests" => Array("Type" => "int(10) unsigned"),
+		"locked" => Array("Type" => "enum('oui','non')", "Default"=>"non"),
+		"uid_creat" => Array("Type" => "int(10) unsigned", "Index" => "1", ),
+		"dte_creat" => Array("Type" => "datetime", "Default" => "0000-00-00 00:00:00"),
+		"uid_maj" => Array("Type" => "int(11)", ),
+		"dte_maj" => Array("Type" => "datetime", "Default" => "0000-00-00 00:00:00"),
+	),
+	"testcase" => Array (
+		"id" => Array("Type" => "int(10) unsigned", "Index" => "PRIMARY", ),
+		"name" => Array("Type" => "varchar(100)" ),
+		"actif" => Array("Type" => "enum('oui','non')", "Default" => "oui", "Index"=>1),
+		"uid_creat" => Array("Type" => "int(10) unsigned", "Index" => "1", ),
+		"dte_creat" => Array("Type" => "datetime", "Default" => "0000-00-00 00:00:00"),
+		"uid_maj" => Array("Type" => "int(11)", ),
+		"dte_maj" => Array("Type" => "datetime", "Default" => "0000-00-00 00:00:00"),
+	),
+	
+);
+?>
