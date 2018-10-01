@@ -1,0 +1,7 @@
+config/config.inc.php
+config/variables.inc.php
+custom/
+documents/
+!documents/.htaccess
+static/cache/
+!static/cache/.htaccess
