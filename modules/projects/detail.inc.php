@@ -38,6 +38,9 @@
 	$msg_confirmation="";
 	if (($fonc=="Enregistrer") && (!isset($_SESSION['tab_checkpost'][$checktime])))
 	{
+		$form_data=checkVar("form_data","array");
+		$form_mgr=checkVar("form_mgr","array");
+
 		$prj=new project_class($id,$sql);
 		if (count($form_data)>0)
 		{

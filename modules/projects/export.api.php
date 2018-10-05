@@ -6,7 +6,7 @@
   	require_once ($appfolder."/class/project.inc.php");
   	require_once ("class/excel.inc.php");
 
-	require_once($appfolder.'/custom/portphp/vendor/autoload.php');
+	require_once($appfolder.'/external/portphp/vendor/autoload.php');
 	use Port\Excel\ExcelWriter;
 
 // ---- Vérifie les paramètres
@@ -362,7 +362,40 @@
 		echo $binary;
 		unlink($filename);
 	}
+	else if ($type=="tmplbacklog")
+	{
+		$filename=$appfolder."/custom/tmp/".uniqid(rand(), true).".xlsx";
+		$file = new \SplFileObject($filename,'w');
+		$tmpl = new ExcelWriter($file);
+		$tmpl->prepare();
+		// $tmpl->writeItem(['first', 'last']);
+		// $tmpl->writeItem(['first' => 'James', 'last' => 'Bond']);
+		$q="SELECT * FROM ".$MyOpt["tbl"]."_backlog WHERE actif='oui'";
+		$sql->Query($q);
+		$tab=array();
+		$tab[]="day (YYYY-MM-DD)";
+		$tab[]="sprint";
+		$tab[]="wave";
+		for($i=0; $i<$sql->rows; $i++)
+		{
+			$sql->GetRow($i);
+			$tab[]=$sql->data["name"];
+		}
+		$tmpl->writeItem($tab);
+		$tmpl->finish();
 
+		header("Content-Disposition: attachment; filename=\"backlog.xlsx\"");
+		header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		$filesize = filesize($filename);
+		// open file for reading in binary mode
+		$fp = fopen($filename, 'rb');
+		// read the entire file into a binary string
+		$binary = fread($fp, $filesize);
+		// finally close the file
+		fclose($fp);
+		echo $binary;
+		unlink($filename);
+	}
 
 
 

@@ -106,7 +106,7 @@ $( function() {
 					else
 					{
 						console.log("nok");
-						document.getElementById('msgbox').innerHTML="<div class='msgbox-std msgbox-error'>Erreur lors de la sauvegarde ("+response.result+")</div>";
+						document.getElementById('msgbox').innerHTML="<div class='msgbox-std msgbox-error'>{lang_saveerror} ("+response.result+")</div>";
 					}
 				},
 				error : function(response)
@@ -134,7 +134,7 @@ $( function() {
 
 		if (document.getElementById('form_file').value=="")
 		{
-			document.getElementById('msgbox').innerHTML="<div class='msgbox-std msgbox-error'>Aucun fichier n'a été sélectionné</div>";
+			document.getElementById('msgbox').innerHTML="<div class='msgbox-std msgbox-error'>{lang_nofile}</div>";
 			valid = false;
 		}
 		
@@ -171,7 +171,7 @@ $( function() {
 					else
 					{
 						console.log("nok");
-						document.getElementById('msgbox').innerHTML="<div class='msgbox-std msgbox-error'>Erreur lors de la sauvegarde ("+response.result+")</div>";
+						document.getElementById('msgbox').innerHTML="<div class='msgbox-std msgbox-error'>{lang_saveerror} ("+response.result+")</div>";
 					}
 				},
 				error : function(response)
@@ -207,6 +207,7 @@ $( function() {
 			}
 		});   
 	}
+
 	
 	function sendForm(id) {
 		console.log("send:"+id);
@@ -239,7 +240,7 @@ $( function() {
 			dataType: 'JSON',
 
 			success: function(response) {
-				document.getElementById('msgbox').innerHTML="<div id='msgbox_"+id+"' class='msgbox-std msgbox-ok'>Un email de rappel a été envoyé à "+response.email+"</div>";
+				document.getElementById('msgbox').innerHTML="<div id='msgbox_"+id+"' class='msgbox-std msgbox-ok'>{lang_emailsent} "+response.email+"</div>";
 			},
 			error: function(response) {
 				console.log("error");
@@ -255,8 +256,8 @@ $( function() {
 	  top: 10,
       modal: true,
       buttons: {
-        "Soumettre": editSendForm,
-        "Enregistrer": editSaveForm,
+        "{lang_submit}": editSendForm,
+        "{lang_save}": editSaveForm,
         Cancel: function() {
           dialog.dialog( "close" );
         }
@@ -274,8 +275,8 @@ $( function() {
 	  top: 10,
       modal: true,
       buttons: {
-        "Soumettre": importSendForm,
-        "Enregistrer": importSaveForm,
+        "{lang_submit}": importSendForm,
+        "{lang_save}": importSaveForm,
         Cancel: function() {
           importDialog.dialog( "close" );
         }
@@ -307,20 +308,246 @@ $( function() {
 		mailForm({form_id});
     });
 <!-- END: lst_mail -->
+
+
+	backlogDialog = $( "#backlog-form" ).dialog({
+      autoOpen: false,
+      height: 490,
+      width: 420,
+	  top: 10,
+      modal: true,
+      buttons: {
+        "{lang_submit}": editSendBacklog,
+        "{lang_save}": editSaveBacklog,
+        Cancel: function() {
+          backlogDialog.dialog( "close" );
+        }
+      },
+      close: function() {
+        <!-- form[ 0 ].reset(); -->
+        allFields.removeClass( "ui-state-error" );
+      }
+    });
+
+	backlogImport = $( "#backlog-import" ).dialog({
+      autoOpen: false,
+      height: 200,
+      width: 420,
+	  top: 10,
+      modal: true,
+      buttons: {
+        "{lang_submit}": importSendBacklog,
+        "{lang_save}": importSaveBacklog,
+        Cancel: function() {
+          backlogImport.dialog( "close" );
+        }
+      },
+    });
+<!-- BEGIN: lst_bl_edit -->
+	$( "#import_bl_{form_id}" ).on( "click", function() {
+		document.getElementById('import_bl_id').value={form_id};
+		backlogImport.dialog( "open" );
+    });
+	$( "#edit_bl_{form_id}" ).on( "click", function() {
+		loadBacklogForm({form_id});
+		backlogDialog.dialog( "open" );
+    });
+<!-- END: lst_bl_edit -->
+<!-- BEGIN: lst_bl_send -->
+	$( "#send_bl_{form_id}" ).on( "click", function() {
+		sendBacklog({form_id});
+    });
+<!-- END: lst_bl_send -->
+
+
+	function loadBacklogForm(id) {
+		console.log("open backlog:"+id);
+		$.ajax({
+			type: 'GET',
+			url: 'api.php?mod=projects&rub=updbacklog&fonc=get&id='+id,
+			dataType: 'JSON',
+
+			success: function(response) {
+				document.getElementById('form_bl_id').value=response.id;
+				document.getElementById('form_bl_day').innerHTML=response.day;
+				document.getElementById('form_bl_sprint').value=response.sprint;
+				document.getElementById('form_bl_wave').value=response.wave;
+				var locked=response.locked;
+<!-- BEGIN: lst_bl_form -->
+				document.getElementById('form_bl_lid_{form_bl_pid}').value=response.phases[{form_bl_pid}].lid;
+				document.getElementById('form_bl_tests_{form_bl_pid}').value=response.phases[{form_bl_pid}].tests;
+<!-- END: lst_bl_form -->
+			},
+			error: function(response) {
+				console.log("error");
+				console.log(response);
+			}
+		});   
+	}
+
+    function editSaveBacklog() {
+		console.log("Save backlog");
+		submitBacklog(false);
+	}
+    function editSendBacklog() {
+		console.log("Submit backlog");
+		submitBacklog(true);
+	}
+	
+    function submitBacklog(send) {
+		var valid = true;
+		allFields.removeClass( "ui-state-error" );
+
+		if ( valid ) {
+			backlogDialog.dialog( "close" );
+
+			var sendurl="";
+			if (send)
+			{
+				sendurl="&submit=yes";
+			}
+			
+			var id=document.getElementById('form_bl_id').value;
+
+			console.log("edit "+id);
+			data = {};
+			data["phases"]=[];
+			data["sprint"]=document.getElementById('form_bl_sprint').value;
+			data["wave"]=document.getElementById('form_bl_wave').value;
+			<!-- data["titre"]=document.getElementById('form_titre').value; -->
+<!-- BEGIN: lst_bl_post -->
+			data["phases"][{form_bl_pid}]={};
+			data["phases"][{form_bl_pid}]["lid"]=document.getElementById('form_bl_lid_{form_bl_pid}').value;
+			data["phases"][{form_bl_pid}]["tests"]=document.getElementById('form_bl_tests_{form_bl_pid}').value;
+<!-- END: lst_bl_post -->
+
+
+			$.ajax({
+				url:'api.php?mod=projects&rub=updbacklog&fonc=post&id='+id+sendurl,
+				type: 'POST',
+				data: data,
+				dataType: 'JSON',
+				success: function(response)
+				{
+					if (response.result=="OK")
+					{
+						console.log("ok");
+						document.location="index.php";
+					}
+					else
+					{
+						console.log("nok");
+						document.getElementById('msgbox').innerHTML="<div class='msgbox-std msgbox-error'>{lang_saveerror} ("+response.result+")</div>";
+					}
+				},
+				error : function(response)
+				{
+				}
+			});
+		}
+		return valid;
+    }
+
+    function importSaveBacklog() {
+		console.log("Import backlog");
+		importBacklog(false);
+	}
+    function importSendBacklog() {
+		console.log("Import+Submit backlog");
+		importBacklog(true);
+	}
+
+   function importBacklog(send) {
+		var valid = true;
+		allFields.removeClass( "ui-state-error" );
+
+		if (document.getElementById('form_bl_file').value=="")
+		{
+			document.getElementById('msgbox').innerHTML="<div class='msgbox-std msgbox-error'>{lang_nofile}</div>";
+			valid = false;
+		}
+		
+		if ( valid ) {
+			backlogImport.dialog( "close" );
+
+			var sendurl="";
+			if (send)
+			{
+				sendurl="&submit=yes";
+			}
+
+			var id=document.getElementById('import_bl_id').value;
+
+			console.log("import backlog "+id);
+			var form = document.getElementById('backlogdata');
+			var formData = new FormData(form);
+
+			$.ajax({
+				url:'api.php?mod=projects&rub=updbacklog&fonc=import&id='+id+sendurl,
+				type: 'POST',
+				data: formData,
+				dataType: 'JSON',
+				processData: false,
+				contentType: false,
+				success: function(response)
+				{
+					if (response.result=="OK")
+					{
+						console.log("ok");
+						document.location="index.php";
+					}
+					else
+					{
+						console.log("nok");
+						document.getElementById('msgbox').innerHTML="<div class='msgbox-std msgbox-error'>{lang_saveerror} ("+response.result+")</div>";
+					}
+				},
+				error : function(response)
+				{
+				}
+			});
+		}
+		return valid;
+    }
+
+	function sendBacklog(id) {
+		console.log("send backlog:"+id);
+		$.ajax({
+			type: 'GET',
+			url: 'api.php?mod=projects&rub=updbacklog&fonc=send&id='+id,
+			dataType: 'JSON',
+
+			success: function(response) {
+				document.getElementById('form_bl_id').value=response.id;
+				document.getElementById('import_bl_'+id).style.display='none';
+				document.getElementById('edit_bl_'+id).style.display='none';
+				document.getElementById('send_bl_'+id).style.display='none';
+				document.getElementById('mail_bl_'+id).style.display='none';
+				document.getElementById('status_bl_'+id).innerHTML='Soumis';
+				document.getElementById('status_bl_'+id).style.backgroundColor='#{msgboxBackgroundOk}';
+			},
+			error: function(response) {
+				console.log("error");
+				console.log(response);
+			}
+		});   
+	}
+
 });
 </script>
+
+<script src="{corefolder}/external/highchart/js/highcharts.js"></script>
 
 <style>
 .formulaire td { font-size:12px; }
 .formulaire th { font-size:12px; }
 </style>
 
-<div id="dialog-form" title="Saisir le consommé du projet" class="formulaire" style="display:none;">
-<form>
+<div id="dialog-form" title="{lang_fillfollowup}" class="formulaire" style="display:none;">
 	<input id="form_id" type="hidden" value="">
-	<p><label>Semaine</label><span id='form_week' style='width:150px!important;'></span></p>
-	<p><label>Sprint</label><input id="form_sprint" value="" style='width:100px!important;'></p>
-	<p><label>Wave</label><input id="form_wave" value="" style='width:100px!important;'></p>
+	<p><label>{lang_week}</label><span id='form_week' style='width:150px!important;'></span></p>
+	<p><label>{lang_sprint}</label><input id="form_sprint" value="" style='width:100px!important;'></p>
+	<p><label>{lang_wave}</label><input id="form_wave" value="" style='width:100px!important;'></p>
 	<table class="tableauAff">
 		<tr><th width=190>Testing Phase</th><th width=200>Test Cases</th></tr>
 
@@ -330,17 +557,42 @@ $( function() {
 		
 	</table>
 	<input type="submit" tabindex="-1" value="Enregistrer" style="position:absolute; top:-1000px">
-</form>
 </div>
 
-<div id="import-form" title="Importer le consommé du projet" class="formulaire" style="display:none;">
-<form id="formdata">
-	<p>Télécharger un template de fichier d'import : <a href="api.php?mod=projects&rub=export&type=template" target="_blank">import.xlsx</a></p>
-	<input id="import_id" name="import_id" type="hidden" value="">
-	<input type="file" id="form_file" name="form_file" style='width:390px!important; border: 0px;'>
-	<input type="submit" tabindex="-1" value="Enregistrer" style="position:absolute; top:-1000px">
-</form>
+<div id="import-form" title="{lang_importfollowup}" class="formulaire" style="display:none;">
+	<form id="formdata">
+		<p>{lang_downloadtmpl} : <a href="api.php?mod=projects&rub=export&type=template" target="_blank">import.xlsx</a></p>
+		<input id="import_id" name="import_id" type="hidden" value="">
+		<input type="file" id="form_file" name="form_file" style='width:390px!important; border: 0px;'>
+		<input type="submit" tabindex="-1" value="{lang_save}" style="position:absolute; top:-1000px">
+	</form>
 </div>
+
+<div id="backlog-form" title="{lang_enterbacklog}" class="formulaire" style="display:none;">
+	<input id="form_bl_id" type="hidden" value="">
+	<p><label>{lang_day}</label><span id='form_bl_day' style='width:150px!important;'></span></p>
+	<p><label>Sprint</label><input id="form_bl_sprint" value="" style='width:100px!important;'></p>
+	<p><label>Wave</label><input id="form_bl_wave" value="" style='width:100px!important;'></p>
+	<table class="tableauAff">
+		<tr><th width=190>Backlog</th><th width=200>Tests</th></tr>
+
+<!-- BEGIN: lst_bl_phases -->
+		<tr><td>{form_bl_name}<input id="form_bl_lid_{form_bl_pid}" type="hidden" value=""></td><td><input id="form_bl_tests_{form_bl_pid}" value="" style='width:100px!important;'></td></tr>
+<!-- END: lst_bl_phases -->
+		
+	</table>
+	<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+</div>
+
+<div id="backlog-import" title="{lang_importbacklog}" class="formulaire" style="display:none;">
+	<form id="backlogdata">
+		<p>{lang_downloadtmpl} : <a href="api.php?mod=projects&rub=export&type=tmplbacklog" target="_blank">backlog.xlsx</a></p>
+		<input id="import_bl_id" name="import_bl_id" type="hidden" value="">
+		<input type="file" id="form_bl_file" name="form_bl_file" style='width:390px!important; border: 0px;'>
+		<input type="submit" tabindex="-1" value="{lang_save}" style="position:absolute; top:-1000px">
+	</form>
+</div>
+
 
 <style>
 .export { position: absolute; right: 20px; margin-top: -10px; }
@@ -350,77 +602,148 @@ $( function() {
 
 <div class='export'>
 <!-- BEGIN: export -->
-<A href="api.php?mod=projects&rub=export&limit=week&type=list" target="_blank"><IMG src="static/modules/projects/img/icn32_export.png" alt="">Saisies de la semaine </A>&nbsp;
-<A href="api.php?mod=projects&rub=export&limit=week&type=status" target="_blank"><IMG src="static/modules/projects/img/icn32_export.png" alt="">Absences de la semaine</A>
+<A href="api.php?mod=projects&rub=export&limit=week&type=list" target="_blank"><IMG src="static/modules/projects/img/icn32_export.png" alt="">{lang_downloadfollowup} </A>&nbsp;
+<A href="api.php?mod=projects&rub=export&limit=week&type=status" target="_blank"><IMG src="static/modules/projects/img/icn32_export.png" alt="">{lang_downloadmissing}</A>
 <!-- END: export -->
-<a href="api.php?mod=projects&rub=export&type=template" target="_blank"><IMG src="static/modules/projects/img/icn32_export.png" alt="">Template d'import</a>
+<a href="api.php?mod=projects&rub=export&type=template" target="_blank"><IMG src="static/modules/projects/img/icn32_export.png" alt="">{lang_downloadtmpl}</a>
 </div>
 
 <!-- BEGIN: lst_projects -->
 <div style='width:960px; padding-bottom: 20px;'>
-<div class='formulaireTitre'>{form_name}</div>
+	<div class='formulaireTitre'>{form_name}</div>
 
-<div class='formulaire'>
-	<p style='color:#{TitleBackgroundHover};'><b>INFORMATIONS GENERALES</b></p>
-	<table style='margin-left:40px;'>
-		<tr style='text-align:left;'>
-			<th width=150>Status</th>
-			<th width=100>Client</th>
-			<th width=100>Pays</th>
-			<th width=80>Version</th>
-			<th width=150>Business Type</th>
-			<th width=200>Project Type</th>
-			<th width=100>Budget</th>
-		</tr>
-		<tr>
-			<td>{form_status}</td>
-			<td>{form_client}</td>
-			<td>{form_country}</td>
-			<td>{form_version}</td>
-			<td>{form_business}</td>
-			<td>{form_type}</td>
-			<td>{form_budget}</td>
-		</tr>
-		<tr style='padding-top:5px;'>
-			<th style="text-align:left;">Jour de rapport</th><td>{form_day}</td>
-		</tr>
-		<tr>
-			<th style="text-align:left;">Chef de projet</th><td colspan=6>{form_manager}</td>
-		</tr>
-	</table>
-</div>
-
-<div class='formulaire'>
-	<div style='float:right;'>
-		Status : <div id='status_{form_id}' style='display: inline-block; background-color:#{form_color}; padding:2px;'>{form_phases_status}</div>&nbsp;
-		
-		<a id='import_{form_id}' class='imgDelete' style='display:{aff_edit};'><img src='static/modules/projects/img/icn16_upload.png'></a>
-		<a id='edit_{form_id}' class='imgDelete' style='display:{aff_edit};'><img src='static/modules/projects/img/icn16_editer.png'></a>
-		<a id='send_{form_id}' class='imgDelete' style='display:{aff_send};'><img src='static/modules/projects/img/icn16_send.png'></a>
-		<a id='mail_{form_id}' class='imgDelete' style='display:{aff_mail};'><img src='static/modules/projects/img/icn16_mail.png'></a>
-	
+	<div class='formulaire'>
+		<p style='color:#{TitleBackgroundHover};'><b>{lang_maininfos}</b></p>
+		<table style='margin-left:40px;'>
+			<tr style='text-align:left;'>
+				<th width=150>{lang_status}</th>
+				<th width=100>{lang_client}</th>
+				<th width=100>{lang_country}</th>
+				<th width=80>{lang_version}</th>
+				<th width=150>{lang_business}</th>
+				<th width=200>{lang_project}</th>
+				<th width=100>{lang_budget}</th>
+			</tr>
+			<tr>
+				<td>{form_status}</td>
+				<td>{form_client}</td>
+				<td>{form_country}</td>
+				<td>{form_version}</td>
+				<td>{form_business}</td>
+				<td>{form_type}</td>
+				<td>{form_budget}</td>
+			</tr>
+			<tr style='padding-top:5px;'>
+				<th style="text-align:left;">{lang_reportday}</th><td>{form_day}</td>
+			</tr>
+			<tr>
+				<th style="text-align:left;">{lang_projectmgt}</th><td colspan=6>{form_manager}</td>
+			</tr>
+		</table>
 	</div>
-	<p style='color:#{TitleBackgroundHover};'><b>REPORTING SEMAINE : </b>{form_week}</p>
-	<table style='margin-left:40px;'>
-		<tr>
-			<th style="text-align:left;" width=120>Sprint courant</th><td width=70>{form_sprint}</td>
-			<th style="text-align:left;" width=120>Wave courant</th><td>{form_wave}</td>
-		</tr>
-	</table>
-	<table style='margin-left:40px;' class='tableauAff'>
-		<tr style='text-align:left;' class='tableauTitre'>
-		<!-- BEGIN: lst_phases_title -->
-			<th width=120>{form_phases_title}</th>
-		<!-- END: lst_phases_title -->
-		</tr>
-		<tr>
-		<!-- BEGIN: lst_phases_data -->
-			<td width=120>{form_phases_data}</td>
-		<!-- END: lst_phases_data -->
-		</tr>
-	</table>
+
+	<div class='formulaire'>
+		<div style='float:right;'>
+			{lang_status} : <div id='status_{form_id}' style='display: inline-block; background-color:#{form_color}; padding-left:4px; padding-right:4px; border-radius:3px;'>{form_phases_status}</div>&nbsp;
+			
+			<a id='import_{form_id}' class='imgDelete' style='display:{aff_edit};'><img src='static/modules/projects/img/icn16_upload.png'></a>
+			<a id='edit_{form_id}' class='imgDelete' style='display:{aff_edit};'><img src='static/modules/projects/img/icn16_editer.png'></a>
+			<a id='send_{form_id}' class='imgDelete' style='display:{aff_send};'><img src='static/modules/projects/img/icn16_send.png'></a>
+			<a id='mail_{form_id}' class='imgDelete' style='display:{aff_mail};'><img src='static/modules/projects/img/icn16_mail.png'></a>
+		
+		</div>
+		<p style='color:#{TitleBackgroundHover};'><b>{lang_weeklyreport} : </b>{form_week}</p>
+		<table style='margin-left:40px;'>
+			<tr>
+				<th style="text-align:left;" width=120>{lang_currentsprint}</th><td width=70>{form_sprint}</td>
+				<th style="text-align:left;" width=120>{lang_currentwave}</th><td>{form_wave}</td>
+			</tr>
+		</table>
+		<table style='margin-left:40px;' class='tableauAff'>
+			<tr style='text-align:left;' class='tableauTitre'>
+			<!-- BEGIN: lst_phases_title -->
+				<th width=120>{form_phases_title}</th>
+			<!-- END: lst_phases_title -->
+			</tr>
+			<tr>
+			<!-- BEGIN: lst_phases_data -->
+				<td width=120>{form_phases_data}</td>
+			<!-- END: lst_phases_data -->
+			</tr>
+		</table>
+		
+	</div>
 	
-</div>
+	<div class='formulaire'>
+		<div style='float:right;'>
+			{lang_status} : <div id='status_bl_{form_id}' style='display: inline-block; background-color:#{form_bl_color}; padding-left:4px; padding-right:4px; border-radius:3px;'>{form_backlog_status}</div>&nbsp;
+			
+			<a id='import_bl_{form_id}' class='imgDelete' style='display:{aff_bl_edit};'><img src='static/modules/projects/img/icn16_upload.png'></a>
+			<a id='edit_bl_{form_id}' class='imgDelete' style='display:{aff_bl_edit};'><img src='static/modules/projects/img/icn16_editer.png'></a>
+			<a id='send_bl_{form_id}' class='imgDelete' style='display:{aff_bl_send};'><img src='static/modules/projects/img/icn16_send.png'></a>
+			<a id='mail_bl_{form_id}' class='imgDelete' style='display:{aff_bl_mail};'><img src='static/modules/projects/img/icn16_mail.png'></a>
+		
+		</div>
+		<p style='color:#{TitleBackgroundHover};'><b>{lang_dailybacklog} : </b>{form_bl_week}</p>
+		<table style='margin-left:40px;'>
+			<tr>
+				<th style="text-align:left;" width=120>{lang_currentsprint}</th><td width=70>{form_bl_sprint}</td>
+				<th style="text-align:left;" width=120>{lang_currentwave}</th><td>{form_bl_wave}</td>
+			</tr>
+		</table>
+
+		<div id="chart_backlog_{form_id}" style="min-width: 310px; max-width: 800px; height: 140px; margin: 0;"></div>
+
+		<script type="text/javascript">
+		$(function () {
+			$('#chart_backlog_{form_id}').highcharts({
+				chart: {
+					type: 'area'
+				},
+				title: {
+					text: ''
+				},
+				xAxis: {
+					categories: [
+			<!-- BEGIN: lst_bl_day -->
+						'{aff_bl_day}',
+			<!-- END: lst_bl_day -->
+					],
+					crosshair: true
+				},
+				yAxis: {
+					min: 0,
+					title: {
+						text: ''
+					}
+				},
+				credits: {
+					enabled: false
+				},
+				legend: {
+					enabled: false
+				},
+			    plotOptions: {
+					series: {
+						stacking: 'percent'
+					}
+				},
+				series: [
+				
+<!-- BEGIN: lst_graph_backlog -->
+					{
+						name: '{graph_bl_name}',
+						data: [{graph_bl_series}],
+						animation: false
+
+					},
+<!-- END: lst_graph_backlog -->
+				]
+			});
+		});
+	</script>
+		
+	</div>
 </div>
 <!-- END: lst_projects -->
 

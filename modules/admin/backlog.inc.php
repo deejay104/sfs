@@ -1,5 +1,5 @@
 <?
-	if (!GetDroit("AccesConfigPhases")) { FatalError("Accès non autorisé (AccesConfigPhases)"); }
+	if (!GetDroit("AccesConfigBacklog")) { FatalError("Accès non autorisé (AccesConfigBacklog)"); }
 
 // ---- Charge le template
 	$tmpl_x->assign("path_module","$module/$mod");
@@ -15,13 +15,13 @@
 	$tmpl_x->assign("aff_menu",$aff_menu);
 
 // ---- Enregistre les modifications
-	if (($fonc=="Enregistrer") && (is_array($form_name)) && (!isset($_SESSION['tab_checkpost'][$checktime])))
+	if (($fonc==$tabLang["lang_save"]) && (is_array($form_name)) && (!isset($_SESSION['tab_checkpost'][$checktime])))
 	{
 	  	foreach($form_name as $id=>$name)
 	  	{
 			if ($name!="")
 			{
-				$sql->Edit("testcase",$MyOpt["tbl"]."_testcase",$id,array("name"=>$name));
+				$sql->Edit("backlog",$MyOpt["tbl"]."_backlog",$id,array("name"=>$name));
 			}
 		}
 		$_SESSION['tab_checkpost'][$checktime]=$checktime;
@@ -30,13 +30,13 @@
 // ---- Supprime un poste
 	if (($fonc=="delete") && ($id>0))
 	{
-		$sql->Edit("testcase",$MyOpt["tbl"]."_testcase",$id,array("actif"=>"non"));		
+		$sql->Edit("backlog",$MyOpt["tbl"]."_backlog",$id,array("actif"=>"non"));		
 	}
 
 // ---- Affiche la page demandée
 
 	// Liste des mouvements
-	$query = "SELECT * FROM ".$MyOpt["tbl"]."_testcase WHERE actif='oui' ORDER BY id";
+	$query = "SELECT * FROM ".$MyOpt["tbl"]."_backlog WHERE actif='oui' ORDER BY id";
 	$sql->Query($query);
 	for($i=0; $i<$sql->rows; $i++)
 	  { 

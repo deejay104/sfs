@@ -16,6 +16,10 @@
 	{
 		$tmpl_menu->parse("infos.phases");
 	}
+	if (GetDroit("AccesConfigBacklog"))
+	{
+		$tmpl_menu->parse("infos.backlog");
+	}
 
 	$tmpl_menu->parse("infos");
 	$aff_menu.=$tmpl_menu->text("infos");

@@ -36,8 +36,14 @@ class project_class extends objet_core
 		"day"=>"enum"
 	);
 	protected $tabList=array(
-		"status"=>array('1new'=>'Nouveau','2inprg'=>'En cours','3close'=>'Terminé'),
-		"day"=>array("1"=>"Lundi","2"=>"Mardi","3"=>"Mercredi","4"=>"Jeudi","5"=>"Vendredi","6"=>"Samedi","7"=>"Dimanche")
+		"status"=>array(
+			"fr"=>array('1new'=>"Nouveau",'2inprg'=>'En cours','3close'=>'Terminé'),
+			"en"=>array('1new'=>"New",'2inprg'=>'In progress','3close'=>'Closed'),
+		),
+		"day"=>array(
+			"fr"=>array("1"=>"Lundi","2"=>"Mardi","3"=>"Mercredi","4"=>"Jeudi","5"=>"Vendredi","6"=>"Samedi","7"=>"Dimanche"),
+			"en"=>array("1"=>"Monday","2"=>"Tuesday","3"=>"Wednesday","4"=>"Thursday","5"=>"Friday","6"=>"Saturday","7"=>"Sunday"),
+		)
 	);
 	protected $droit=array(
 		"day"=>"ModifDay"
@@ -48,7 +54,7 @@ class project_class extends objet_core
 	# Constructor
 	function __construct($id=0,$sql)
 	{
-		global $gl_uid,$MyOpt;
+		global $gl_uid,$MyOpt,$tabLang;
 		
 		$this->data["name"]="";
 		$this->data["client"]="";
@@ -60,20 +66,12 @@ class project_class extends objet_core
 		$this->data["budget"]=0;
 		$this->data["status"]="1new";
 		$this->data["day"]=$MyOpt["InitialDay"];
-
+		
 		parent::__construct($id,$sql);		
 
 		$this->usr_maj = new user_core($this->uid_maj,$sql,false,false);
 	}
-	// function aff($key,$typeaff="html",$formname="form_data",&$render="")
-	// {
-		// if (($key=="day") && ($this->id>0))
-		// {
-			// $typeaff="html";
-		// }
-		// $ret=parent::aff($key,$typeaff,$formname,$render);
-		// return $ret;
-	// }
+
 	function loadManager()
 	{
 		global $MyOpt;
@@ -95,6 +93,7 @@ class project_class extends objet_core
 		global $MyOpt;
 		$sql=$this->sql;
 
+		$ret="";
 		if ($typeaff=="form")
 		{
 			$ret.="<div style='display:inline-block;'>";
@@ -223,7 +222,7 @@ class project_class extends objet_core
 		$ret=array();
 
 		$t=7+date("N")-$this->data["day"];
-		$tt=($t>7) ? $t-7 : $t;
+		$tt=($t>=7) ? $t-7 : $t;
 		$dte=time()-$tt*86400;
 		$ret["week"]=date("Y-W",$dte);
 		$ret["dte"]=date("d/m/Y",$dte);
@@ -287,6 +286,76 @@ class project_class extends objet_core
 		return $ret;
 	}
 
+	function GetBacklog($init=0,$prev=true)
+	{
+		global $MyOpt;
+		
+		$sql=$this->sql;
+
+		$ret=array();
+
+		$ret["week"]=date("Y-W");
+		$ret["dte"]=date("d/m/Y");
+		$ret["sprint"]=0;
+		$ret["wave"]=0;
+		$ret["locked"]="non";
+
+		$ret["phases"]=array();
+		$query = "SELECT * FROM ".$MyOpt["tbl"]."_backlog WHERE actif='oui' ORDER BY id";
+		$sql->Query($query);
+		for($i=0; $i<$sql->rows; $i++)
+		{ 
+			$sql->GetRow($i);
+			$ret["phases"][$sql->data["id"]]["lid"]=0;
+			$ret["phases"][$sql->data["id"]]["tests"]=$init;
+			$ret["phases"][$sql->data["id"]]["name"]=$sql->data["name"];
+		}
+
+		if ($prev)
+		{
+			$query = "SELECT * FROM ".$MyOpt["tbl"]."_bl_followup WHERE project='".$this->id."' AND dte='".date("Y-m-d",time()-86400)."'";
+			$sql->Query($query);
+
+			for($i=0; $i<$sql->rows; $i++)
+			{ 
+				$sql->GetRow($i);
+				$ret["phases"][$sql->data["phase"]]["lid"]=0;
+				$ret["phases"][$sql->data["phase"]]["tests"]=$sql->data["tests"];
+				if (($sql->data["sprint"]!="") && ($sql->data["sprint"]!=0))
+				{
+					$ret["sprint"]=$sql->data["sprint"];
+				}
+				if (($sql->data["wave"]!="") && ($sql->data["wave"]!=0))
+				{
+					$ret["wave"]=$sql->data["wave"];
+				}
+			}
+		}
+	
+		$query = "SELECT * FROM ".$MyOpt["tbl"]."_bl_followup WHERE project='".$this->id."' AND dte='".date("Y-m-d")."'";
+		$sql->Query($query);
+		for($i=0; $i<$sql->rows; $i++)
+		{ 
+			$sql->GetRow($i);
+			$ret["phases"][$sql->data["phase"]]["lid"]=$sql->data["id"];
+			$ret["phases"][$sql->data["phase"]]["tests"]=$sql->data["tests"];
+			if (($sql->data["sprint"]!="") && ($sql->data["sprint"]!=0))
+			{
+				$ret["sprint"]=$sql->data["sprint"];
+			}
+			if (($sql->data["wave"]!="") && ($sql->data["wave"]!=0))
+			{
+				$ret["wave"]=$sql->data["wave"];
+			}			
+			if ($sql->data["locked"]=="oui")
+			{
+				$ret["locked"]="oui";
+			}
+		}
+		
+		return $ret;
+	}
+	
 	function Notify()
 	{
 		global $MyOpt;

@@ -7,7 +7,7 @@
 
   	require_once ($appfolder."/class/project.inc.php");
 
-	require_once($appfolder.'/custom/portphp/vendor/autoload.php');
+	require_once($appfolder.'/external/portphp/vendor/autoload.php');
 	use Port\Excel\ExcelReader;
 
 // ---- Vérifie les paramètres
@@ -107,7 +107,7 @@
 			$res=$sql->QueryRow($query);
 
 			$t=7+date("N")-$res["day"];
-			$tt=($t>7) ? $t-7 : $t;
+			$tt=($t>=7) ? $t-7 : $t;
 			$dte=time()-$tt*86400;
 			$week=date("Y-m-d",$dte);
 			

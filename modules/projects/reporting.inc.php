@@ -28,7 +28,7 @@
 	$trie=checkVar("trie","varchar");
 	
 // ---- Charge le template
-	$tmpl_x = new XTemplate (MyRep("myprojects.htm"));
+	$tmpl_x = LoadTemplate("reporting");
 	$tmpl_x->assign("path_module",$module."/".$mod);
 	$tmpl_x->assign("aff_mod",$mod);
 

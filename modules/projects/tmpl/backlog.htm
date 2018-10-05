@@ -1,0 +1,186 @@
+<!-- BEGIN: icone -->
+	<img src="{path_module}/img/icn48_myprojects.png" alt="" border=0 />
+<!-- END: icone -->
+
+<!-- BEGIN: infos -->
+{aff_menu}
+<!-- END: infos -->
+
+
+<!-- BEGIN: corps -->
+<script>
+$( function() {
+    var dialog, form,
+ 
+    // From http://www.whatwg.org/specs/web-apps/current-work/multipage/states-of-the-type-attribute.html#e-mail-state-%28type=email%29
+    timeRegex = /^(([0-9])+)?([:h])?([0-9])+$/i,
+
+	form_titre = $( "#form_titre" ),
+	form_corps = $("#form_corps"),
+	allFields = $( [] ).add( form_titre ).add( form_corps ),
+
+	tips = $( ".validateTips" );
+ 
+    function updateTips( t ) {
+      tips
+        .text( t )
+        .addClass( "ui-state-highlight" );
+		setTimeout(function() {
+			tips.removeClass( "ui-state-highlight", 1500 );
+		}, 500 );
+    }
+ 
+    function checkLength( o, n, min, max ) {
+      if ( o.val().length > max || o.val().length < min ) {
+        o.addClass( "ui-state-error" );
+        updateTips( "Length of " + n + " must be between " +
+          min + " and " + max + "." );
+        return false;
+      } else {
+        return true;
+      }
+    }
+ 
+    function checkRegexp( o, regexp, n ) {
+      if ( !( regexp.test( o.val() ) ) ) {
+        o.addClass( "ui-state-error" );
+        updateTips( n );
+        return false;
+      } else {
+        return true;
+      }
+    }
+ 
+    function saveForm() {
+		console.log("Soumettre");
+		dialog.dialog( "close" );
+		editForm();
+		var id=document.getElementById('form_id').value;
+		sendForm(id);
+	}
+
+    function editForm() {
+		var valid = true;
+		allFields.removeClass( "ui-state-error" );
+
+		if ( valid ) {
+			dialog.dialog( "close" );
+
+			var id=document.getElementById('form_id').value;
+			console.log("edit "+id);
+			data = {};
+			data["phases"]=[];
+			data["sprint"]=document.getElementById('form_sprint').value;
+			data["wave"]=document.getElementById('form_wave').value;
+			<!-- data["titre"]=document.getElementById('form_titre').value; -->
+<!-- BEGIN: lst_post -->
+			data["phases"][{form_pid}]={};
+			data["phases"][{form_pid}]["lid"]=document.getElementById('form_lid_{form_pid}').value;
+			data["phases"][{form_pid}]["tests"]=document.getElementById('form_tests_{form_pid}').value;
+<!-- END: lst_post -->
+
+
+			$.ajax({
+				url:'api.php?mod=projects&rub=updbacklog&fonc=post&id='+id,
+				type: 'POST',
+				data: data,
+				dataType: 'JSON',
+				success: function(response)
+				{
+					if (response.result=="OK")
+					{
+						console.log("ok");
+						document.getElementById('msgbox').innerHTML="<div id='msgbox_"+id+"' class='msgbox-std msgbox-ok'>Les informations ont été enregistrées</div>";
+						document.location="index.php?mod=projects&rub=backlog";
+					}
+					else
+					{
+						console.log("nok");
+						document.getElementById('msgbox').innerHTML="<div class='msgbox-std msgbox-error'>Erreur lors de la sauvegarde ("+response.result+")</div>";
+					}
+				},
+				error : function(response)
+				{
+				}
+			});
+		}
+		return valid;
+    }
+
+	function loadForm(id) {
+				console.log("open:"+id);
+		$.ajax({
+			type: 'GET',
+			url: 'api.php?mod=projects&rub=updbacklog&fonc=get&id='+id,
+			dataType: 'JSON',
+
+			success: function(response) {
+				console.log(response);
+				document.getElementById('form_id').value=response.id;
+				document.getElementById('form_day').innerHTML=response.day;
+				document.getElementById('form_sprint').value=response.sprint;
+				document.getElementById('form_wave').value=response.wave;
+<!-- BEGIN: lst_form -->
+				document.getElementById('form_lid_{form_pid}').value=response.phases[{form_pid}].lid;
+				document.getElementById('form_tests_{form_pid}').value=response.phases[{form_pid}].tests;
+<!-- END: lst_form -->
+			},
+			error: function(response) {
+				console.log("error");
+				console.log(response);
+			}
+		});   
+	}
+	
+    dialog = $( "#dialog-form" ).dialog({
+      autoOpen: false,
+      height: 490,
+      width: 420,
+	  top: 10,
+      modal: true,
+      buttons: {
+        "{lang_submit}": saveForm,
+        "{lang_save}": editForm,
+        Cancel: function() {
+          dialog.dialog( "close" );
+        }
+      },
+      close: function() {
+        <!-- form[ 0 ].reset(); -->
+        allFields.removeClass( "ui-state-error" );
+      }
+    });
+ 
+    form = dialog.find( "form" ).on( "submit", function( event ) {
+      event.preventDefault();
+      editForm();
+    });
+ 
+<!-- BEGIN: lst_edit -->
+	$( "#edit_{lst_id}" ).on( "click", function() {
+		loadForm({lst_id});
+		dialog.dialog( "open" );
+    });
+<!-- END: lst_edit -->
+});
+</script>
+
+<div id="dialog-form" title="{lang_enterbacklog}" class="formulaire" style="display:none;">
+	<input id="form_id" type="hidden" value="">
+	<p><label>{lang_day}</label><span id='form_day' style='width:150px!important;'></span></p>
+	<p><label>Sprint</label><input id="form_sprint" value="" style='width:100px!important;'></p>
+	<p><label>Wave</label><input id="form_wave" value="" style='width:100px!important;'></p>
+	<table class="tableauAff">
+		<tr><th width=190>Backlog</th><th width=200>Tests</th></tr>
+
+<!-- BEGIN: lst_backlog -->
+		<tr><td>{form_name}<input id="form_lid_{form_pid}" type="hidden" value=""></td><td><input id="form_tests_{form_pid}" value="" style='width:100px!important;'></td></tr>
+<!-- END: lst_backlog -->
+		
+	</table>
+	<input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+</div>
+
+{aff_tableau}
+
+<!-- END: corps -->
