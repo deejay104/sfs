@@ -123,9 +123,11 @@
 
 				// error_log(print_r($reader,true));
 				$cl_day=0;
-				foreach($reader->worksheet[0] as $i=>$wc)
+				$i=0;
+				while((isset($reader->worksheet[$i][0])) && ($i<25) )
 				{
 					// error_log(strtolower($wc)." ".$tabTest[strtolower($wc)]);
+					$wc=$reader->worksheet[$i][0];
 					if (strtolower($wc)=="day")
 					{
 						$cl_day=$i;
@@ -142,16 +144,28 @@
 					{
 						$tabMenu[$tabTest[strtolower($wc)]]=$i;
 					}
+					$i=$i+1;
 				}
-				$i=1;
-				while((isset($reader->worksheet[$i][$cl_day])) && ($i<25) )
+
+				foreach($reader->worksheet[0] as $i=>$wc)
 				{
-					$dte=$reader->worksheet[$i][$cl_day];
+					if ($wc=="day")
+					{
+						continue;
+					}
+					
+					$dte=$reader->worksheet[$cl_day][$i];
 					$dte=date("Y-m-d",($dte-25569)*3600*24);
 					$week=date("Y-W",strtotime($dte));
-					$sprint=$reader->worksheet[$i][$cl_sprint];
-					$wave=$reader->worksheet[$i][$cl_wave];
+					$sprint=$reader->worksheet[$cl_sprint][$i];
+					$wave=$reader->worksheet[$cl_wave][$i];
 
+					// Si dte dans le futur on passe
+					if (strtotime($dte)>time())
+					{
+						continue;
+					}
+					
 					foreach($tabMenu as $pid=>$ii)
 					{
 						$q="SELECT id FROM ".$MyOpt["tbl"]."_bl_followup WHERE dte='".$dte."' AND phase='".$pid."'";
@@ -164,7 +178,7 @@
 						$td["phase"]=$pid;
 						$td["sprint"]=$sprint;
 						$td["wave"]=$wave;
-						$td["tests"]=addslashes(utf8_decode($reader->worksheet[$i][$ii]));
+						$td["tests"]=addslashes(utf8_decode($reader->worksheet[$ii][$i]));
 						
 						if ($submit=="yes")
 						{
@@ -174,8 +188,8 @@
 						$td["uid_maj"]=$gl_uid;
 						$td["dte_maj"]=now();
 						$sql->Edit("bl_followup",$MyOpt["tbl"]."_bl_followup",$res["id"],$td);
-
-						// error_log($i." ".$id.": ".$dte." ".$pid."=".$td["tests"]);
+// error_log(print_r($td,true));
+						error_log($i." ".$id.": ".$dte." ".$pid."=".$td["tests"]." -> ".$res["id"]);
 					}
 					$i=$i+1;
 				}

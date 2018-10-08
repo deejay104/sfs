@@ -12,7 +12,8 @@
 	$tabLang["lang_wave"]="Wave";
 	$tabLang["lang_importfollowup"]="Import followup";
 	$tabLang["lang_importbacklog"]="Import backlog";
-	$tabLang["lang_downloadtmpl"]="Import template";
+	$tabLang["lang_downloadtmplweekly"]="Template Tests";
+	$tabLang["lang_downloadtmpldaily"]="Template Backlog";
 	$tabLang["lang_downloadfollowup"]="Week";
 	$tabLang["lang_downloadmissing"]="Missing";
 	$tabLang["lang_maininfos"]="INFORMATIONS";

@@ -373,15 +373,20 @@
 		$q="SELECT * FROM ".$MyOpt["tbl"]."_backlog WHERE actif='oui'";
 		$sql->Query($q);
 		$tab=array();
-		$tab[]="day (YYYY-MM-DD)";
-		$tab[]="sprint";
-		$tab[]="wave";
+		$tab[0]="day";
+		$tab[1]=date("d/m/Y");
+		$tmpl->writeItem($tab);
+		$tab=array();
+		$tab[0]="sprint";
+		$tmpl->writeItem($tab);
+		$tab[0]="wave";
+		$tmpl->writeItem($tab);
 		for($i=0; $i<$sql->rows; $i++)
 		{
 			$sql->GetRow($i);
-			$tab[]=$sql->data["name"];
+			$tab[0]=$sql->data["name"];
+			$tmpl->writeItem($tab);
 		}
-		$tmpl->writeItem($tab);
 		$tmpl->finish();
 
 		header("Content-Disposition: attachment; filename=\"backlog.xlsx\"");

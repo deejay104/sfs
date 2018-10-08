@@ -101,7 +101,7 @@ $( function() {
 					{
 						console.log("ok");
 						<!-- document.getElementById('msgbox').innerHTML="<div id='msgbox_"+id+"' class='msgbox-std msgbox-ok'>Les informations ont été enregistrées</div>"; -->
-						document.location="index.php";
+						document.location="index.php?id="+id;
 					}
 					else
 					{
@@ -166,7 +166,7 @@ $( function() {
 					{
 						console.log("ok");
 						<!-- document.getElementById('msgbox').innerHTML="<div id='msgbox_"+id+"' class='msgbox-std msgbox-ok'>Les informations ont été enregistrées</div>"; -->
-						document.location="index.php";
+						document.location="index.php?id="+id;
 					}
 					else
 					{
@@ -432,7 +432,7 @@ $( function() {
 					if (response.result=="OK")
 					{
 						console.log("ok");
-						document.location="index.php";
+						document.location="index.php?id="+id;
 					}
 					else
 					{
@@ -494,7 +494,7 @@ $( function() {
 					if (response.result=="OK")
 					{
 						console.log("ok");
-						document.location="index.php";
+						document.location="index.php?id="+id;
 					}
 					else
 					{
@@ -605,10 +605,18 @@ $( function() {
 <A href="api.php?mod=projects&rub=export&limit=week&type=list" target="_blank"><IMG src="static/modules/projects/img/icn32_export.png" alt="">{lang_downloadfollowup} </A>&nbsp;
 <A href="api.php?mod=projects&rub=export&limit=week&type=status" target="_blank"><IMG src="static/modules/projects/img/icn32_export.png" alt="">{lang_downloadmissing}</A>
 <!-- END: export -->
-<a href="api.php?mod=projects&rub=export&type=template" target="_blank"><IMG src="static/modules/projects/img/icn32_export.png" alt="">{lang_downloadtmpl}</a>
+<a href="api.php?mod=projects&rub=export&type=template" target="_blank"><IMG src="static/modules/projects/img/icn32_export.png" alt="">{lang_downloadtmplweekly}</a>
+<a href="api.php?mod=projects&rub=export&type=tmplbacklog" target="_blank"><IMG src="static/modules/projects/img/icn32_export.png" alt="">{lang_downloadtmpldaily}</a>
 </div>
 
+<select id="form_project" OnChange="document.location='index.php?id='+document.getElementById('form_project').value;">
 <!-- BEGIN: lst_projects -->
+<option value="{form_prj_id}" {form_prj_selected}>{form_prj_name}</option>
+<!-- END: lst_projects -->
+</select>
+<br />
+<br />
+
 <div style='width:960px; padding-bottom: 20px;'>
 	<div class='formulaireTitre'>{form_name}</div>
 
@@ -661,17 +669,69 @@ $( function() {
 		</table>
 		<table style='margin-left:40px;' class='tableauAff'>
 			<tr style='text-align:left;' class='tableauTitre'>
+				<th width=120>{lang_week}</th>
 			<!-- BEGIN: lst_phases_title -->
 				<th width=120>{form_phases_title}</th>
 			<!-- END: lst_phases_title -->
 			</tr>
+			<!-- BEGIN: lst_weekly -->
 			<tr>
+				<td width=120>{form_week_data}</td>
 			<!-- BEGIN: lst_phases_data -->
 				<td width=120>{form_phases_data}</td>
 			<!-- END: lst_phases_data -->
 			</tr>
+			<!-- END: lst_weekly -->
 		</table>
 		
+		<div id="chart_test_{form_id}" style="min-width: 310px; max-width: 800px; height: 140px; margin: 0;"></div>
+
+		<script type="text/javascript">
+		$(function () {
+			$('#chart_test_{form_id}').highcharts({
+				chart: {
+					type: 'area'
+				},
+				title: {
+					text: ''
+				},
+				xAxis: {
+					categories: [
+			<!-- BEGIN: lst_tst_day -->
+						'{aff_tst_day}',
+			<!-- END: lst_tst_day -->
+					],
+					crosshair: true
+				},
+				yAxis: {
+					min: 0,
+					title: {
+						text: ''
+					}
+				},
+				credits: {
+					enabled: false
+				},
+				legend: {
+					enabled: false
+				},
+			    plotOptions: {
+					series: {
+						stacking: 'normal'
+					}
+				},
+				series: [
+<!-- BEGIN: lst_graph_tst -->
+					{
+						name: '{graph_tst_name}',
+						data: [{graph_tst_series}],
+						animation: false
+					},
+<!-- END: lst_graph_tst -->
+				]
+			});
+		});
+		</script>
 	</div>
 	
 	<div class='formulaire'>
@@ -690,6 +750,22 @@ $( function() {
 				<th style="text-align:left;" width=120>{lang_currentsprint}</th><td width=70>{form_bl_sprint}</td>
 				<th style="text-align:left;" width=120>{lang_currentwave}</th><td>{form_bl_wave}</td>
 			</tr>
+		</table>
+		<table style='margin-left:40px;' class='tableauAff'>
+			<tr style='text-align:left;' class='tableauTitre'>
+				<th width=120>{lang_week}</th>
+			<!-- BEGIN: lst_bl_title -->
+				<th width=120>{form_backlog_title}</th>
+			<!-- END: lst_bl_title -->
+			</tr>
+			<!-- BEGIN: lst_bl_daily -->
+			<tr>
+				<td width=120>{form_daily_data}</td>
+			<!-- BEGIN: lst_bl_data -->
+				<td width=120>{form_backlog_data}</td>
+			<!-- END: lst_bl_data -->
+			</tr>
+			<!-- END: lst_bl_daily -->
 		</table>
 
 		<div id="chart_backlog_{form_id}" style="min-width: 310px; max-width: 800px; height: 140px; margin: 0;"></div>
@@ -725,7 +801,7 @@ $( function() {
 				},
 			    plotOptions: {
 					series: {
-						stacking: 'percent'
+						stacking: 'normal'
 					}
 				},
 				series: [
@@ -745,6 +821,5 @@ $( function() {
 		
 	</div>
 </div>
-<!-- END: lst_projects -->
 
 <!-- END: corps -->
