@@ -7,6 +7,7 @@
 	$tabLang["lang_nofile"]="No file has been selected";
 	$tabLang["lang_emailsent"]="An email has been sent to";
 	$tabLang["lang_fillfollowup"]="Enter project followup";
+	$tabLang["lang_fillbacklog"]="Enter project backlog";
 	$tabLang["lang_week"]="Week";
 	$tabLang["lang_sprint"]="Sprint";
 	$tabLang["lang_wave"]="Wave";
@@ -34,6 +35,9 @@
 
 	$tabLang["lang_dailybacklog"]="DAILY BACKLOG";
 	
-	
+	$tabLang["lang_followup"]["saved"]="Saved";
+	$tabLang["lang_followup"]["submitted"]="Submitted";
+	$tabLang["lang_followup"]["pending"]="Pending";
+
 	
 ?>

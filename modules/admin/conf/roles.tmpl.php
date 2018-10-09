@@ -14,4 +14,8 @@ $tabRoles["AccesConfigBacklog"]="Autoriser la configuration des backlog";
 
 
 $tabRoles["ModifDay"]="Autoriser la modification du jour de rapport";
+$tabRoles["SupprimeProjet"]="Supprime un projet";
+
+
+
 ?>

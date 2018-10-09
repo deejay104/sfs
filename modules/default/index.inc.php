@@ -106,23 +106,29 @@
 	}
 
 // ---- Affiche la liste des projets
+	$tabPrj=array();
 	foreach($lst as $pid=>$d)
 	{
 		$prj = new project_class($pid,$sql);
 		if ($prj->data["actif"]=="oui")
 		{
-			$tmpl_x->assign("form_prj_id",$pid);
-			$tmpl_x->assign("form_prj_name",$prj->val("name"));
-			$tmpl_x->assign("form_prj_selected",($pid==$id) ? "selected" : "");
-			$tmpl_x->parse("corps.lst_projects");
-
+			$tabPrj[$pid]=$prj->val("name");
 			if ($id==0)
 			{
 				$id=$pid;
 			}
 		}
 	}
-			
+	asort($tabPrj);
+
+	foreach($tabPrj as $pid=>$n)
+	{
+		$tmpl_x->assign("form_prj_id",$pid);
+		$tmpl_x->assign("form_prj_name",$n);
+		$tmpl_x->assign("form_prj_selected",($pid==$id) ? "selected" : "");
+		$tmpl_x->parse("corps.lst_projects");
+	}
+	
 	$prj = new project_class($id,$sql);
 	$prj->Render("form","html");
 	$tmpl_x->assign("form_id",$id);
@@ -137,7 +143,7 @@
 	$tmpl_x->assign("aff_mail", "none");
 	$tmpl_x->assign("form_week_data", $ret["week"]);
 
-	$ok="Enregistré";
+	$ok="saved";
 	$mail="";
 
 	// Weekly Report
@@ -151,7 +157,7 @@
 		
 		if ($ret["phases"][$tid]["tests"]=="NA")
 		{
-			$ok="A soumettre";
+			$ok="pending";
 			$mail="ok";
 			$tmpl_x->assign("form_color", $MyOpt["styleColor"]["msgboxBackgroundError"]);
 		}
@@ -160,7 +166,7 @@
 
 	if ($ret["locked"]=="oui")
 	{
-		$ok="Soumis";
+		$ok="submitted";
 		$tmpl_x->assign("form_color", $MyOpt["styleColor"]["msgboxBackgroundOk"]);
 	}
 	else if ((!GetDroit("AccesProjets")) || ($prj->IsMyProject()))
@@ -168,7 +174,7 @@
 		$tmpl_x->assign("aff_edit", "inline-block");
 		$tmpl_x->parse("corps.lst_edit");
 	}
-	if ($ok=="Enregistré")
+	if ($ok=="saved")
 	{
 		$mail="ok";
 		$tmpl_x->assign("form_color", $MyOpt["styleColor"]["msgboxBackgroundWarning"]);
@@ -183,7 +189,7 @@
 		$tmpl_x->assign("aff_mail", "inline-block");
 		$tmpl_x->parse("corps.lst_mail");
 	}
-	$tmpl_x->assign("form_phases_status", $ok);
+	$tmpl_x->assign("form_phases_status", $tabLang["lang_followup"][$ok]);
 
 	// Affiche l'historique
 	$tabValeur=array();
@@ -237,6 +243,7 @@
 	
 	// Daily Backlog
 	$ret=$prj->GetBacklog("NA",false);
+
 	$tmpl_x->assign("form_bl_sprint", $ret["sprint"]);
 	$tmpl_x->assign("form_bl_wave", $ret["wave"]);
 	$tmpl_x->assign("form_bl_week", $ret["week"]);
@@ -244,7 +251,7 @@
 	$tmpl_x->assign("aff_bl_send", "none");
 	$tmpl_x->assign("aff_bl_mail", "none");
 
-	$ok="Enregistré";
+	$ok="saved";
 	$mail="";
 	foreach($tabBacklog as $pid=>$pn)
 	{
@@ -256,14 +263,14 @@
 		
 		if ($ret["phases"][$pid]["tests"]=="NA")
 		{
-			$ok="A soumettre";
+			$ok="pending";
 			$mail="ok";
 			$tmpl_x->assign("form_bl_color", $MyOpt["styleColor"]["msgboxBackgroundError"]);
 		}
 	}
 	if ($ret["locked"]=="oui")
 	{
-		$ok="Soumis";
+		$ok="submitted";
 		$tmpl_x->assign("form_bl_color", $MyOpt["styleColor"]["msgboxBackgroundOk"]);
 	}
 	else if ((!GetDroit("AccesProjets")) || ($prj->IsMyProject()))
@@ -271,7 +278,7 @@
 		$tmpl_x->assign("aff_bl_edit", "inline-block");
 		$tmpl_x->parse("corps.lst_bl_edit");
 	}
-	if ($ok=="Enregistré")
+	if ($ok=="saved")
 	{
 		$mail="ok";
 		$tmpl_x->assign("form_bl_color", $MyOpt["styleColor"]["msgboxBackgroundWarning"]);
@@ -283,37 +290,15 @@
 		}
 	}
 	
-	$tmpl_x->assign("form_backlog_status", $ok);
+	$tmpl_x->assign("form_backlog_status", $tabLang["lang_followup"][$ok]);
 
-	// Graph des backlog
-	// foreach($tabBacklog as $i=>$n)
-	// {
-		// $tmpl_x->assign("graph_bl_name", $n);
-
-		// foreach($tabGraph as $d=>$ii)
-		// {
-			// $tmpl_x->assign("aff_bl_day", date("d.m",strtotime($d)));
-			// $tmpl_x->parse("corps.lst_bl_day");
-		// }
-
-
-		// $s="";
-		// $query = "SELECT * FROM ".$MyOpt["tbl"]."_bl_followup WHERE project='".$id."' AND phase='".$i."' AND dte>='".$stime."' AND dte<=NOW() ORDER BY dte";
-		// $sql->Query($query);
-		// for($i=0; $i<$sql->rows; $i++)
-		// { 
-			// $sql->GetRow($i);
-			// $s.="[".$tabGraph[$sql->data["dte"]].",".$sql->data["tests"]."],";
-		// }
-		// $tmpl_x->assign("graph_bl_series", $s);
-		// $tmpl_x->parse("corps.lst_graph_backlog");
-	// }
 	$tabValeur=array();
-	$query = "SELECT * FROM ".$MyOpt["tbl"]."_bl_followup WHERE project='".$id."' AND dte>='".$stime."' AND dte<=NOW()";
+	$query = "SELECT * FROM ".$MyOpt["tbl"]."_bl_followup WHERE project='".$id."' AND dte>='".$stime."' AND dte<=NOW() ORDER BY dte,tests";
 	$sql->Query($query);
 	for($i=0; $i<$sql->rows; $i++)
 	{ 
 		$sql->GetRow($i);
+
 		$tabValeur[$sql->data["dte"]]["week"]=$sql->data["week"];
 		$tabValeur[$sql->data["dte"]]["dte"]=strtotime($sql->data["dte"]);
 		$tabValeur[$sql->data["dte"]][$sql->data["phase"]]=$sql->data["tests"];
@@ -354,7 +339,6 @@
 		$tmpl_x->parse("corps.lst_graph_backlog");
 	}
 
-	
 	
 // ---- Affecte les variables d'affichage
 	$tmpl_x->parse("icone");

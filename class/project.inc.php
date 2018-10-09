@@ -241,24 +241,24 @@ class project_class extends objet_core
 			$ret["phases"][$sql->data["id"]]["name"]=$sql->data["name"];
 		}
 
-		if ($prev)
-		{
-			$query = "SELECT * FROM ".$MyOpt["tbl"]."_followup WHERE project='".$this->id."' AND week='".date("Y-W",$dte-86400*7)."'";
-			$sql->Query($query);
+		$query = "SELECT * FROM ".$MyOpt["tbl"]."_followup WHERE project='".$this->id."' AND week='".date("Y-W",$dte-86400*7)."'";
+		$sql->Query($query);
 
-			for($i=0; $i<$sql->rows; $i++)
-			{ 
-				$sql->GetRow($i);
+		for($i=0; $i<$sql->rows; $i++)
+		{ 
+			$sql->GetRow($i);
+			if ($prev)
+			{
 				$ret["phases"][$sql->data["phase"]]["lid"]=0;
 				$ret["phases"][$sql->data["phase"]]["tests"]=$sql->data["tests"];
-				if (($sql->data["sprint"]!="") && ($sql->data["sprint"]!=0))
-				{
-					$ret["sprint"]=$sql->data["sprint"];
-				}
-				if (($sql->data["wave"]!="") && ($sql->data["wave"]!=0))
-				{
-					$ret["wave"]=$sql->data["wave"];
-				}
+			}
+			if (($sql->data["sprint"]!="") && ($sql->data["sprint"]!=0))
+			{
+				$ret["sprint"]=$sql->data["sprint"];
+			}
+			if (($sql->data["wave"]!="") && ($sql->data["wave"]!=0))
+			{
+				$ret["wave"]=$sql->data["wave"];
 			}
 		}
 	
@@ -311,24 +311,24 @@ class project_class extends objet_core
 			$ret["phases"][$sql->data["id"]]["name"]=$sql->data["name"];
 		}
 
-		if ($prev)
-		{
-			$query = "SELECT * FROM ".$MyOpt["tbl"]."_bl_followup WHERE project='".$this->id."' AND dte='".date("Y-m-d",time()-86400)."'";
-			$sql->Query($query);
+		$query = "SELECT * FROM ".$MyOpt["tbl"]."_bl_followup WHERE project='".$this->id."' AND dte='".date("Y-m-d",time()-86400)."'";
+		$sql->Query($query);
 
-			for($i=0; $i<$sql->rows; $i++)
-			{ 
-				$sql->GetRow($i);
+		for($i=0; $i<$sql->rows; $i++)
+		{ 
+			$sql->GetRow($i);
+			if ($prev)
+			{
 				$ret["phases"][$sql->data["phase"]]["lid"]=0;
 				$ret["phases"][$sql->data["phase"]]["tests"]=$sql->data["tests"];
-				if (($sql->data["sprint"]!="") && ($sql->data["sprint"]!=0))
-				{
-					$ret["sprint"]=$sql->data["sprint"];
-				}
-				if (($sql->data["wave"]!="") && ($sql->data["wave"]!=0))
-				{
-					$ret["wave"]=$sql->data["wave"];
-				}
+			}
+			if (($sql->data["sprint"]!="") && ($sql->data["sprint"]!=0))
+			{
+				$ret["sprint"]=$sql->data["sprint"];
+			}
+			if (($sql->data["wave"]!="") && ($sql->data["wave"]!=0))
+			{
+				$ret["wave"]=$sql->data["wave"];
 			}
 		}
 	

@@ -168,7 +168,7 @@
 					
 					foreach($tabMenu as $pid=>$ii)
 					{
-						$q="SELECT id FROM ".$MyOpt["tbl"]."_bl_followup WHERE dte='".$dte."' AND phase='".$pid."'";
+						$q="SELECT id FROM ".$MyOpt["tbl"]."_bl_followup WHERE dte='".$dte."' AND project='".$id."' AND phase='".$pid."'";
 						$res=$sql->QueryRow($q);
 						
 						$td=array();
