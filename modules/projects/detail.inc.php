@@ -24,7 +24,7 @@
 	if (!GetDroit("AccesProjet")) { FatalError("Accès non autorisé (AccesProjet)"); }
 
 // ---- Charge le template
-	$tmpl_x = new XTemplate (MyRep("detail.htm"));
+	$tmpl_x = LoadTemplate("detail","");
 	$tmpl_x->assign("path_module",$module."/".$mod);
 	$tmpl_x->assign("form_checktime",$_SESSION['checkpost']);
 
@@ -36,7 +36,7 @@
 // ---- Enregistrer
 	$msg_erreur="";
 	$msg_confirmation="";
-	if (($fonc=="Enregistrer") && (!isset($_SESSION['tab_checkpost'][$checktime])))
+	if (($fonc==$tabLang["lang_save"]) && (!isset($_SESSION['tab_checkpost'][$checktime])))
 	{
 		$form_data=checkVar("form_data","array");
 		$form_mgr=checkVar("form_mgr","array");
@@ -51,7 +51,7 @@
 		}
 		if ($prj->Save()>0)
 		{
-			$msg_confirmation.="Vos données ont été enregistrées.<BR>";
+			$msg_confirmation.=$tabLang["lang_datasaved"];
 		}
 		$prj->SaveManager($form_mgr);
 		if ($id==0)
@@ -62,7 +62,7 @@
 		$_SESSION['tab_checkpost'][$checktime]=$checktime;
 	}
 // ---- Supprimer
-	if (($fonc=="supprimer") && ($id>0) && (GetDroit("SupprimeAmelioration")))
+	if (($fonc=="delete") && ($id>0) && (GetDroit("SupprimeAmelioration")))
 	{
 		$prj=new project_class($id,$sql);
 		$prj->Delete();
@@ -103,7 +103,7 @@
 	{
 		$typeaff="form";
 	}
-	else if (($fonc=="modifier") && (GetDroit("ModifProjet")))
+	else if (($fonc=="modify") && (GetDroit("ModifProjet")))
 	{
 		$typeaff="form";
 	}
@@ -127,8 +127,8 @@
 
 // ---- Affiche l'historique
 	$tabTitre=array(
-		"week" => array("aff"=>"Semaine","width"=>100),
-		"dte" => array("aff"=>"Date","width"=>100),
+		"week" => array("aff"=>$tabLang["lang_week"],"width"=>100),
+		"dte" => array("aff"=>$tabLang["lang_date"],"width"=>100),
 		"sprint" => array("aff"=>"Sprint","width"=>50),
 		"wave" => array("aff"=>"Wave","width"=>50),
 	);

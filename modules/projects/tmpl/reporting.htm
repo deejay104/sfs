@@ -90,13 +90,13 @@ $( function() {
 					if (response.result=="OK")
 					{
 						console.log("ok");
-						document.getElementById('msgbox').innerHTML="<div id='msgbox_"+id+"' class='msgbox-std msgbox-ok'>Les informations ont été enregistrées</div>";
+						document.getElementById('msgbox').innerHTML="<div id='msgbox_"+id+"' class='msgbox-std msgbox-ok'>{lang_datasaved}</div>";
 						document.location="index.php?mod=projects&rub=reporting";
 					}
 					else
 					{
 						console.log("nok");
-						document.getElementById('msgbox').innerHTML="<div class='msgbox-std msgbox-error'>Erreur lors de la sauvegarde ("+response.result+")</div>";
+						document.getElementById('msgbox').innerHTML="<div class='msgbox-std msgbox-error'>{lang_dataerror} ("+response.result+")</div>";
 					}
 				},
 				error : function(response)
@@ -139,8 +139,8 @@ $( function() {
 	  top: 10,
       modal: true,
       buttons: {
-        "Soumettre": saveForm,
-        "Enregistrer": editForm,
+        "{lang_submit}": saveForm,
+        "{lang_save}": editForm,
         Cancel: function() {
           dialog.dialog( "close" );
         }
@@ -165,9 +165,9 @@ $( function() {
 });
 </script>
 
-<div id="dialog-form" title="Saisir le consommé du projet" class="formulaire" style="display:none;">
+<div id="dialog-form" title="{lang_fillfollowup}" class="formulaire" style="display:none;">
 	<input id="form_id" type="hidden" value="">
-	<p><label>Semaine</label><span id='form_week' style='width:150px!important;'></span></p>
+	<p><label>{lang_week}</label><span id='form_week' style='width:150px!important;'></span></p>
 	<p><label>Sprint</label><input id="form_sprint" value="" style='width:100px!important;'></p>
 	<p><label>Wave</label><input id="form_wave" value="" style='width:100px!important;'></p>
 	<table class="tableauAff">

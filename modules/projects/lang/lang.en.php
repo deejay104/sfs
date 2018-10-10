@@ -5,4 +5,6 @@
 	$tabLang["lang_exportmissing"]="Missing";
 	$tabLang["lang_exportall"]="Export all followup";
 
+	$tabLang["lang_descriptionprj"]="Project description";
+
 ?>

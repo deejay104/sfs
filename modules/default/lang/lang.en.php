@@ -23,17 +23,18 @@
 
 
 	$tabLang["lang_status"]="Status";
-	$tabLang["lang_client"]="Customer";
+	$tabLang["lang_customer"]="Customer";
 	$tabLang["lang_country"]="Country";
 	$tabLang["lang_version"]="Version";
 	$tabLang["lang_business"]="Business Type";
-	$tabLang["lang_project"]="Project Type";
+	$tabLang["lang_prjtype"]="Project Type";
 	$tabLang["lang_budget"]="Budget";
 	$tabLang["lang_reportday"]="Report day";
 	$tabLang["lang_projectmgt"]="Project Manager";
 	$tabLang["lang_weeklyreport"]="WEEKLY REPORT";
 	$tabLang["lang_currentsprint"]="Current Sprint";
 	$tabLang["lang_currentwave"]="Current Wave";
+	$tabLang["lang_prjmanager"]="Project manager";
 
 	$tabLang["lang_dailybacklog"]="DAILY BACKLOG";
 	

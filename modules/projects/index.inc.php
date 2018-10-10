@@ -55,7 +55,7 @@
 
 	$tabTitre=array(
 		"name" => array("aff"=>$tabLang["lang_name"],"width"=>200),
-		"client" => array("aff"=>$tabLang["lang_client"],"width"=>100),
+		"client" => array("aff"=>$tabLang["lang_customer"],"width"=>100),
 		"country" => array("aff"=>$tabLang["lang_country"],"width"=>100),
 		"version" => array("aff"=>$tabLang["lang_version"],"width"=>100),
 		"business" => array("aff"=>$tabLang["lang_business"],"width"=>100),

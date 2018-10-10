@@ -5,16 +5,16 @@
 <!-- BEGIN: infos -->
 {aff_menu}
 <!-- BEGIN: liste -->
-	<p><A href="index.php?mod=projects"><IMG src="{path_module}/img/icn32_retour.png" alt="">Liste</A></p>
+	<p><A href="index.php?mod=projects"><IMG src="{path_module}/img/icn32_retour.png" alt="">{lang_list}</A></p>
 <!-- END: liste -->
 <!-- BEGIN: ajouter -->
-	<p><A href="index.php?mod=projects&rub=detail&id=0"><IMG src="{path_module}/img/icn32_ajouter.png" alt="">Ajouter</A></p>
+	<p><A href="index.php?mod=projects&rub=detail&id=0"><IMG src="{path_module}/img/icn32_ajouter.png" alt="">{lang_add}</A></p>
 <!-- END: ajouter -->
 <!-- BEGIN: modifier -->
-	<p><A href="index.php?mod=projects&rub=detail&id={form_id}&fonc=modifier"><IMG src="{path_module}/img/icn32_modifier.png" alt="">Modifier</A></p>
+	<p><A href="index.php?mod=projects&rub=detail&id={form_id}&fonc=modify"><IMG src="{path_module}/img/icn32_modifier.png" alt="">{lang_modify}</A></p>
 <!-- END: modifier -->
 <!-- BEGIN: supprimer -->
-	<p><A href="index.php?mod=projects&rub=detail&id={form_id}&fonc=supprimer"><IMG src="{path_module}/img/icn32_supprimer.png" alt="">Supprimer</A></p>
+	<p><A href="index.php?mod=projects&rub=detail&id={form_id}&fonc=delete"><IMG src="{path_module}/img/icn32_supprimer.png" alt="">{lang_delete}</A></p>
 <!-- END: supprimer -->
 
 <!-- END: infos -->
@@ -28,26 +28,26 @@
 	<INPUT type="hidden" name="id" value="{form_id}">
 	<INPUT type="hidden" name="checktime" value="{form_checktime}">
 
-	<p class="lastupdate">Dernière mise à  jour : {form_usr_maj} {form_dte_maj}</p>
+	<p class="lastupdate">{lang_lastupdate} : {form_usr_maj} {form_dte_maj}</p>
 
-	<div class='formulaireTitre'>Description du projet</div>
+	<div class='formulaireTitre'>{lang_descriptionprj}</div>
 	<div class='formulaire'>
-		<p><label>Nom</label>{form_name}</p>
-		<p><label>Status</label>{form_status}</p>
-		<p><label>Client</label>{form_client}</p>
-		<p><label>Pays</label>{form_country}</p>
-		<p><label>Version</label>{form_version}</p>
-		<p><label>Business Type</label>{form_business}</p>
-		<p><label>Project Type</label>{form_type}</p>
-		<p><label>Jour de rapport</label>{form_day}</p>
-		<p><label>Budget</label>{form_budget}</p>
-		<p><label style='float:left;'>Chef de projet</label></p>{form_manager}
+		<p><label>{lang_name}</label>{form_name}</p>
+		<p><label>{lang_status}</label>{form_status}</p>
+		<p><label>{lang_customer}</label>{form_client}</p>
+		<p><label>{lang_country}</label>{form_country}</p>
+		<p><label>{lang_version}</label>{form_version}</p>
+		<p><label>{lang_business}</label>{form_business}</p>
+		<p><label>{lang_prjtype}</label>{form_type}</p>
+		<p><label>{lang_reportday}</label>{form_day}</p>
+		<p><label>{lang_budget}</label>{form_budget}</p>
+		<p><label style='float:left;'>{lang_prjmanager}</label></p>{form_manager}
 	</div>
 
 <!-- BEGIN: submit -->
 	<div class="formulaireSubmit" style="padding-left:55px;">
-		<input type="submit" name="fonc" id="enregistrer" value="Enregistrer">
-		<input type="submit" name="fonc" id="annuler" value="Annuler">
+		<input type="submit" name="fonc" id="enregistrer" value="{lang_save}">
+		<input type="submit" name="fonc" id="annuler" value="{lang_cancel}">
 	</div>
 	<br />
 <!-- END: submit -->

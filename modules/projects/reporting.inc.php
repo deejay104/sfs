@@ -45,8 +45,8 @@
 	$lst=ListMyProjects($sql);
 
 	$tabTitre=array(
-		"name" => array("aff"=>"Nom","width"=>200),
-		"week" => array("aff"=>"Semaine","width"=>100),
+		"name" => array("aff"=>$tabLang["lang_name"],"width"=>200),
+		"week" => array("aff"=>$tabLang["lang_week"],"width"=>100),
 		"sprint" => array("aff"=>"Sprint","width"=>80),
 		"wave" => array("aff"=>"Wave","width"=>80),
 	);
