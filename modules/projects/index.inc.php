@@ -28,7 +28,7 @@
 	$trie=checkVar("trie","varchar");
 	
 // ---- Charge le template
-	$tmpl_x = new XTemplate (MyRep("index.htm"));
+	$tmpl_x = LoadTemplate("index","");
 	$tmpl_x->assign("path_module",$module."/".$mod);
 	$tmpl_x->assign("aff_mod",$mod);
 
@@ -54,12 +54,12 @@
 	$lst=ListProjects($sql);
 
 	$tabTitre=array(
-		"name" => array("aff"=>"Nom","width"=>200),
-		"client" => array("aff"=>"Client","width"=>100),
-		"country" => array("aff"=>"Pays","width"=>100),
-		"version" => array("aff"=>"Version","width"=>100),
-		"business" => array("aff"=>"Business","width"=>100),
-		"budget" => array("aff"=>"Budget","width"=>100),
+		"name" => array("aff"=>$tabLang["lang_name"],"width"=>200),
+		"client" => array("aff"=>$tabLang["lang_client"],"width"=>100),
+		"country" => array("aff"=>$tabLang["lang_country"],"width"=>100),
+		"version" => array("aff"=>$tabLang["lang_version"],"width"=>100),
+		"business" => array("aff"=>$tabLang["lang_business"],"width"=>100),
+		"budget" => array("aff"=>$tabLang["lang_budget"],"width"=>100),
 	);
 	
 	$tabValeur=array();

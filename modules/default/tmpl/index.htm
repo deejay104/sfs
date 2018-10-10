@@ -609,14 +609,13 @@ $( function() {
 <a href="api.php?mod=projects&rub=export&type=tmplbacklog" target="_blank"><IMG src="static/modules/projects/img/icn32_export.png" alt="">{lang_downloadtmpldaily}</a>
 </div>
 
-<select id="form_project" OnChange="document.location='index.php?id='+document.getElementById('form_project').value;">
-<!-- BEGIN: lst_projects -->
-<option value="{form_prj_id}" {form_prj_selected}>{form_prj_name}</option>
-<!-- END: lst_projects -->
-</select>
-<br />
-<br />
-
+<div style='width:960px; padding-top: 10px; padding-bottom: 10px;' class='formulaire'>
+	{lang_selectprj}&nbsp;<select id="form_project" OnChange="document.location='index.php?id='+document.getElementById('form_project').value;">
+	<!-- BEGIN: lst_projects -->
+	<option value="{form_prj_id}" {form_prj_selected}>{form_prj_name}</option>
+	<!-- END: lst_projects -->
+	</select>
+</div>
 <div style='width:960px; padding-bottom: 20px;'>
 	<div class='formulaireTitre'>{form_name}</div>
 
@@ -684,7 +683,7 @@ $( function() {
 			<!-- END: lst_weekly -->
 		</table>
 		
-		<div id="chart_test_{form_id}" style="min-width: 310px; max-width: 800px; height: 140px; margin: 0;"></div>
+		<div id="chart_test_{form_id}" style="min-width: 310px; max-width: 800px; height: 240px; margin: 0;"></div>
 
 		<script type="text/javascript">
 		$(function () {
@@ -768,7 +767,7 @@ $( function() {
 			<!-- END: lst_bl_daily -->
 		</table>
 
-		<div id="chart_backlog_{form_id}" style="min-width: 310px; max-width: 800px; height: 140px; margin: 0;"></div>
+		<div id="chart_backlog_{form_id}" style="min-width: 310px; max-width: 800px; height: 240px; margin: 0;"></div>
 
 		<script type="text/javascript">
 		$(function () {

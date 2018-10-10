@@ -3,6 +3,8 @@
 	$tabLang["menu_reporting"]="Rapport hebdomadaire";
 	$tabLang["menu_backlog"]="Backlog";
 	
+	$tabLang["lang_selectprj"]="Selectionnez votre project";
+
 	$tabLang["lang_saveerror"]="Erreur lors de la sauvegarde";
 	$tabLang["lang_nofile"]="Aucun fichier n'a été sélectionné";
 	$tabLang["lang_emailsent"]="Un email de rappel a été envoyé à";
